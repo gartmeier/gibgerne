@@ -15,40 +15,31 @@ import { Input } from "@/components/ui/input";
 import { createUser } from "@/lib/actions/user";
 import { cn } from "@/lib/utils";
 import { type CreateUserData, createUserSchema } from "@/lib/validations/user";
-import { useState } from "react";
+import { useActionState } from "react";
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [state, formAction, isPending] = useActionState(createUser, undefined);
 
   const form = useForm<CreateUserData>({
     resolver: zodResolver(createUserSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      organization: "",
-    },
+    defaultValues:
+      process.env.NODE_ENV === "development"
+        ? {
+            name: "Joshua Gartmeier",
+            email: "joshua@gartmeier.dev",
+            password: "horsefly",
+            organization: "Helping Hands",
+          }
+        : {
+            name: "",
+            email: "",
+            password: "",
+            organization: "",
+          },
   });
-
-  async function onSubmit(data: CreateUserData) {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      let result = await createUser(data);
-
-      if (result.success) {
-      } else {
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -69,7 +60,7 @@ export function RegisterForm({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form action={formAction} className="space-y-6">
           <FormField
             control={form.control}
             name="name"
@@ -126,7 +117,7 @@ export function RegisterForm({
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={pending}>
+          <Button type="submit" className="w-full" disabled={isPending}>
             Create Account
           </Button>
 
