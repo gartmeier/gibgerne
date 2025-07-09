@@ -1,6 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GalleryVerticalEnd } from "lucide-react";
+import { ArrowRight, CheckCircle, GalleryVerticalEnd } from "lucide-react";
+import Link from "next/link";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,21 +28,54 @@ export function RegisterForm({
 
   const form = useForm<CreateUserData>({
     resolver: zodResolver(createUserSchema),
-    defaultValues:
-      process.env.NODE_ENV === "development"
-        ? {
-            name: "Joshua Gartmeier",
-            email: "joshua@gartmeier.dev",
-            password: "horsefly",
-            organization: "Helping Hands",
-          }
-        : {
-            name: "",
-            email: "",
-            password: "",
-            organization: "",
-          },
+    defaultValues: {
+      name: "Joshua Gartmeier",
+      email: "joshua@gartmeier.dev",
+      password: "horsefly",
+      organization: "Helping Hands",
+    },
   });
+
+  useEffect(() => {
+    form.clearErrors();
+
+    if (state?.success === false && state.fieldErrors) {
+      Object.entries(state.fieldErrors).forEach(([field, errors]) => {
+        if (errors && errors.length > 0) {
+          form.setError(field as keyof CreateUserData, {
+            type: "server",
+            message: errors[0],
+          });
+        }
+      });
+    }
+
+    if (state?.success === false && state.message) {
+      toast.error(state.message);
+    }
+  }, [state, form]);
+
+  if (state?.success) {
+    return (
+      <div className="flex flex-col items-center gap-2 p-6 text-center">
+        <div className="mb-4 invert dark:invert-0">
+          <CheckCircle className="size-12 text-green-500" />
+        </div>
+        <h2 className="text-xl font-bold tracking-[-0.16px] text-gray-900 dark:text-gray-100">
+          Check your email
+        </h2>
+        <span className="text-sm font-normal text-gray-600 dark:text-gray-400">
+          We just sent a verification link to {state.data.email}.
+        </span>
+        <Button asChild className="mt-6 gap-2">
+          <Link href="/login">
+            <span>Go to login</span>
+            <ArrowRight className="size-4" />
+          </Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -53,9 +89,9 @@ export function RegisterForm({
         <h1 className="text-xl font-bold">Create your account</h1>
         <div className="text-center text-sm">
           Already have an account?{" "}
-          <a href="#" className="underline underline-offset-4">
+          <Link href="/login" className="underline underline-offset-4">
             Sign in
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -68,7 +104,11 @@ export function RegisterForm({
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input
+                    placeholder="John Doe"
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,7 +122,12 @@ export function RegisterForm({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="m@example.com" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="m@example.com"
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -96,7 +141,12 @@ export function RegisterForm({
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -110,7 +160,11 @@ export function RegisterForm({
               <FormItem>
                 <FormLabel>Organization</FormLabel>
                 <FormControl>
-                  <Input placeholder="Acme Inc." {...field} />
+                  <Input
+                    placeholder="Acme Inc."
+                    {...field}
+                    disabled={isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
