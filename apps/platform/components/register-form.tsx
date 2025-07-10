@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, CheckCircle, GalleryVerticalEnd } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { startTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -15,9 +15,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createUser } from "@/lib/actions/user";
+import { createUser, CreateUserRequest } from "@/lib/actions/user";
 import { cn } from "@/lib/utils";
-import { type CreateUserData, createUserSchema } from "@/lib/validations/user";
+import { createUserSchema } from "@/lib/validations/user";
 import { useActionState } from "react";
 
 export function RegisterForm({
@@ -26,7 +26,7 @@ export function RegisterForm({
 }: React.ComponentProps<"div">) {
   const [state, formAction, isPending] = useActionState(createUser, undefined);
 
-  const form = useForm<CreateUserData>({
+  const form = useForm<CreateUserRequest>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
       name: "Joshua Gartmeier",
@@ -37,21 +37,21 @@ export function RegisterForm({
   });
 
   useEffect(() => {
-    form.clearErrors();
-
-    if (state?.success === false && state.fieldErrors) {
-      Object.entries(state.fieldErrors).forEach(([field, errors]) => {
+    if (state?.success === false) {
+      Object.entries(state.errors).forEach(([field, errors]) => {
         if (errors && errors.length > 0) {
-          form.setError(field as keyof CreateUserData, {
+          form.setError(field as keyof CreateUserRequest, {
             type: "server",
             message: errors[0],
           });
         }
       });
-    }
 
-    if (state?.success === false && state.message) {
-      toast.error(state.message);
+      if (state.errors.root) {
+        for (const msg of state.errors.root) {
+          toast.error(msg);
+        }
+      }
     }
   }, [state, form]);
 
@@ -96,7 +96,12 @@ export function RegisterForm({
       </div>
 
       <Form {...form}>
-        <form action={formAction} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(async (data) => {
+            startTransition(() => formAction(data));
+          })}
+          className="space-y-6"
+        >
           <FormField
             control={form.control}
             name="name"

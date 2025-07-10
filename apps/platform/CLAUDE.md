@@ -17,6 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Next.js 15 application with the following key architectural components:
 
 ### Authentication & Authorization
+
 - **Better Auth**: Primary authentication system using `better-auth` v1.2.12
 - **Database Integration**: Uses Drizzle adapter with PostgreSQL
 - **Email Verification**: Required for new signups via Resend
@@ -24,12 +25,14 @@ This is a Next.js 15 application with the following key architectural components
 - **Admin Features**: Admin plugin enabled for user management
 
 ### Database Layer
+
 - **ORM**: Drizzle ORM with PostgreSQL
 - **Schema Location**: `db/schema/` (uses barrel exports via `db/schema/index.ts`)
 - **Migrations**: Located in `migrations/` directory
 - **Connection**: Database instance exported from `db/drizzle.ts` with schema configuration
 
 ### Core Authentication Tables
+
 - `user` - User accounts with email verification, roles, and ban functionality
 - `session` - User sessions with IP tracking and organization context
 - `account` - OAuth/external account links
@@ -39,6 +42,7 @@ This is a Next.js 15 application with the following key architectural components
 - `invitation` - Organization invitations
 
 ### Server Actions Pattern
+
 - **Location**: `lib/actions/` directory
 - **Error Handling**: Uses consistent `{success: boolean, data?: any, message?: string, fieldErrors?: Record<string, string[]>}` response format
 - **Validation**: Zod schemas in `lib/validations/` for input validation
@@ -46,59 +50,68 @@ This is a Next.js 15 application with the following key architectural components
 - **Better Auth Errors**: Handle `APIError` from `better-auth/api` with specific error codes
 
 ### Form Handling
+
 - **React Hook Form**: Primary form library with Zod validation
 - **Server Actions**: Forms use `useActionState` for server-side processing
 - **Error Display**: Field-specific errors under inputs + toast notifications via Sonner
 - **UX**: Form inputs disabled during submission (`isPending` state)
 
 ### Email System
+
 - **Service**: Resend for email delivery
 - **Configuration**: API key via `RESEND_API_KEY` environment variable
 - **Integration**: Integrated with Better Auth for verification emails
 
 ### UI Components
+
 - **Framework**: Radix UI primitives with custom styling
 - **Design System**: Tailwind CSS v4 with custom theme configuration
 - **Toast Notifications**: Sonner for user feedback
 - **Form Components**: Located in `components/ui/` following shadcn/ui patterns
 
 ### Environment Variables
+
 Required environment variables:
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `RESEND_API_KEY` - Resend API key for email delivery
 
 ## Key Development Patterns
 
 ### Server Action Error Handling
+
 ```typescript
 // Always use this response format
 return {
   success: false as const,
   message: "User-friendly error message",
   fieldErrors: {
-    fieldName: ["Specific field error"]
-  }
-}
+    fieldName: ["Specific field error"],
+  },
+};
 ```
 
 ### Better Auth Error Handling
+
 ```typescript
 if (error instanceof AuthError) {
   switch (error.body?.code) {
     case "USER_ALREADY_EXISTS":
-      // Handle specific error
+    // Handle specific error
     case "ORGANIZATION_ALREADY_EXISTS":
-      // Handle specific error
+    // Handle specific error
     default:
-      // Generic error handling
+    // Generic error handling
   }
 }
 ```
 
 ### Database Pre-checks
+
 Before creating users or organizations, always check for existing records to prevent partial creation failures.
 
 ### Form Pattern
+
 - Use `useActionState` for server actions
 - Implement field-specific error handling with `useEffect`
 - Clear errors on form submission

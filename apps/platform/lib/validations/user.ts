@@ -8,5 +8,3 @@ export const createUserSchema = z.object({
     .string()
     .min(2, "Organization name must be at least 2 characters"),
 });
-
-export type CreateUserData = z.infer<typeof createUserSchema>;
