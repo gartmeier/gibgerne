@@ -138,6 +138,13 @@ export function ForgotPasswordForm({
           </Button>
         </form>
       </Form>
+
+      <div className="text-center text-sm">
+        Remembered your password?{" "}
+        <Link href="/login" className="underline underline-offset-4">
+          Log in
+        </Link>
+      </div>
     </div>
   );
 }
