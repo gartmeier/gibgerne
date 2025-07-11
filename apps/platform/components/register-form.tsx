@@ -15,19 +15,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createUser, CreateUserRequest } from "@/lib/actions/user";
+import { register } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
-import { createUserSchema } from "@/lib/validations/user";
+import { RegisterData, registerSchema } from "@/lib/validations/auth";
 import { useActionState } from "react";
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [state, formAction, isPending] = useActionState(createUser, undefined);
+  const [state, formAction, isPending] = useActionState(register, undefined);
 
-  const form = useForm<CreateUserRequest>({
-    resolver: zodResolver(createUserSchema),
+  const form = useForm<RegisterData>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "Joshua Gartmeier",
       email: "joshua@gartmeier.dev",
@@ -40,7 +40,7 @@ export function RegisterForm({
     if (state?.success === false) {
       Object.entries(state.errors).forEach(([field, errors]) => {
         if (errors && errors.length > 0) {
-          form.setError(field as keyof CreateUserRequest, {
+          form.setError(field as keyof RegisterData, {
             type: "server",
             message: errors[0],
           });

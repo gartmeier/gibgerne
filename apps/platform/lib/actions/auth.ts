@@ -4,22 +4,19 @@ import { db } from "@/db/drizzle";
 import * as schema from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
-import { createUserSchema } from "@/lib/validations/user";
+import { RegisterData, registerSchema } from "@/lib/validations/auth";
 import { eq } from "drizzle-orm";
-import { z } from "zod";
 
-export type CreateUserRequest = z.infer<typeof createUserSchema>;
-
-export type CreateUserResponse =
+export type RegisterResponse =
   | { success: true; data: { email: string } }
   | { success: false; errors: Record<string, string[]> };
 
-export async function createUser(
+export async function register(
   _prevState: any,
-  data: CreateUserRequest,
-): Promise<CreateUserResponse> {
+  data: RegisterData,
+): Promise<RegisterResponse> {
   try {
-    let validatedFields = createUserSchema.safeParse(data);
+    let validatedFields = registerSchema.safeParse(data);
 
     if (validatedFields.error) {
       return {
