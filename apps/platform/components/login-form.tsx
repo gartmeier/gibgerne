@@ -49,7 +49,7 @@ export function LoginForm({
       }
 
       toast.success("Signed in successfully");
-      router.push("/dashboard");
+      router.push("/");
     } catch (error) {
       toast.error("An unexpected error occurred");
     } finally {
