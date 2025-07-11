@@ -141,10 +141,12 @@ Use Drizzle Kit commands for database operations. The schema is defined in `db/s
 ## Code Style Guidelines
 
 ### Variable Declarations
+
 - Always use `let` unless it is a variable that will never change
 - Use `const` only for true constants (like `const API_URL = "https://api.example.com"`)
 
 ### Function Declarations
+
 - Always use function declarations (`function foo() {}`) for named functions
 - Use arrow functions only for:
   - Anonymous event handlers and callbacks

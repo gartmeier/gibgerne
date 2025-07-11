@@ -29,10 +29,10 @@ export function RegisterForm({
   const form = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: "Joshua Gartmeier",
-      email: "joshua@gartmeier.dev",
-      password: "horsefly",
-      organization: "Helping Hands",
+      name: "",
+      email: "",
+      password: "",
+      organization: "",
     },
   });
 
@@ -69,7 +69,7 @@ export function RegisterForm({
         </span>
         <Button asChild className="mt-6 gap-2">
           <Link href="/login">
-            <span>Go to login</span>
+            <span>Go to Log in</span>
             <ArrowRight className="size-4" />
           </Link>
         </Button>
@@ -90,7 +90,7 @@ export function RegisterForm({
         <div className="text-center text-sm">
           Already have an account?{" "}
           <Link href="/login" className="underline underline-offset-4">
-            Sign in
+            Log in
           </Link>
         </div>
       </div>
@@ -113,6 +113,7 @@ export function RegisterForm({
                     placeholder="John Doe"
                     {...field}
                     disabled={isPending}
+                    autoFocus
                   />
                 </FormControl>
                 <FormMessage />

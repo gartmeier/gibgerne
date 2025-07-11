@@ -44,11 +44,11 @@ export function LoginForm({
       });
 
       if (error) {
-        toast.error(error.message || "Sign in failed");
+        toast.error(error.message || "Log in failed");
         return;
       }
 
-      toast.success("Signed in successfully");
+      toast.success("Logged in successfully");
       router.push("/");
     } catch (error) {
       toast.error("An unexpected error occurred");
@@ -65,9 +65,9 @@ export function LoginForm({
         {...props}
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
+          <h1 className="text-2xl font-bold">Log in to your account</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Enter your email below to login to your account
+            Enter your email below to log in to your account
           </p>
         </div>
         <div className="grid gap-6">
@@ -85,6 +85,7 @@ export function LoginForm({
                     {...field}
                     disabled={isLoading}
                     required
+                    autoFocus
                   />
                 </FormControl>
                 <FormMessage />
@@ -102,6 +103,7 @@ export function LoginForm({
                   <Link
                     href="/forgot-password"
                     className="ml-auto text-sm underline-offset-4 hover:underline"
+                    tabIndex={-1}
                   >
                     Forgot your password?
                   </Link>
@@ -121,7 +123,7 @@ export function LoginForm({
           />
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            Login
+            Log in
           </Button>
         </div>
         <div className="text-center text-sm">
